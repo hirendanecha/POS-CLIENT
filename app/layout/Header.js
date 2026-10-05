@@ -1,61 +1,30 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/slices/authSlice";
 import { fetchNotifications } from "../store/slices/notificationSlice";
 import { Menu, Search, Bell, LogOut, Settings } from "lucide-react";
 import { Avatar } from "../components/ui/Avatar";
-import Badge from "../components/ui/Badge";
 import { NotificationSlider } from "./NotificationSlider";
 
-const PAGE_TITLES = {
-  "/": "Dashboard",
-  "/pos": "POS Billing",
-  "/tables": "Tables & Floor",
-  "/orders": "Order Queue",
-  "/kds": "Kitchen Display",
-  "/menu": "Menu Management",
-  "/inventory": "Inventory & Stock",
-  "/purchase-orders": "Purchase Orders",
-  "/suppliers": "Suppliers",
-  "/invoices": "Invoices",
-  "/crm": "CRM & Loyalty",
-  "/reports": "Reports",
-  "/staff": "Staff Management",
-  "/settings": "Settings",
-  "/hyperpure": "Explore Hyperpure",
-  "/logs": "User Logs",
-  "/zone": "Create Zone",
-  "/apps": "Marketplace Apps",
-  "/help": "Help Center",
-};
-
 export function Header({ onMenuClick }) {
-  const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { branches } = useSelector((state) => state.branch);
   const { unreadCount } = useSelector(
     (state) => state.notifications || { unreadCount: 0 },
   );
 
-  const [showOutletDropdown, setShowOutletDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [isNotificationSliderOpen, setIsNotificationSliderOpen] =
     useState(false);
-  const [selectedOutlet, setSelectedOutlet] = useState(null);
 
-  const dropdownRef = useRef(null);
   const profileDropdownRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowOutletDropdown(false);
-      }
       if (
         profileDropdownRef.current &&
         !profileDropdownRef.current.contains(event.target)
@@ -77,11 +46,6 @@ export function Header({ onMenuClick }) {
     dispatch(logout());
     router.push("/login");
   };
-
-  const title =
-    Object.entries(PAGE_TITLES).find(([k]) =>
-      pathname === "/" ? k === "/" : pathname.startsWith(k) && k !== "/",
-    )?.[1] || "POS Manager";
 
   return (
     <>
